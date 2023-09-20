@@ -1,0 +1,22 @@
+{
+    "name": "charindo/riotaccount-php",
+    "description": "RiotAccount PHP",
+    "type": "library",
+    "require": {
+        "guzzlehttp/guzzle": "^7.8",
+        "2captcha/2captcha": "^1.1",
+        "ext-curl": "*"
+    },
+    "license": "GNU General Public License v3.0",
+    "authors": [
+        {
+            "name": "charindo",
+            "email": "charindo@icloud.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "charindo\\RiotAccount\\": "src/"
+        }
+    }
+}
