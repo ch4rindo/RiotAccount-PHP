@@ -4,76 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "61ff6df17dc77d2a2d9f0e4e1fbd4dd4",
+    "content-hash": "3229100a79677c293841ff7f6e5ec698",
     "packages": [
-        {
-            "name": "2captcha/2captcha",
-            "version": "v1.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/2captcha/2captcha-php.git",
-                "reference": "f58c8a78446a6aad58c211fb622cf5ac335b9f77"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/2captcha/2captcha-php/zipball/f58c8a78446a6aad58c211fb622cf5ac335b9f77",
-                "reference": "f58c8a78446a6aad58c211fb622cf5ac335b9f77",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-fileinfo": "*",
-                "ext-mbstring": "*",
-                "php": ">=5.6"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "8.5.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "TwoCaptcha\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "2captcha",
-                    "email": "info@2captcha.com",
-                    "homepage": "https://2captcha.com/"
-                }
-            ],
-            "description": "PHP package for easy integration with 2captcha API",
-            "keywords": [
-                "2captcha",
-                "2captcha.com",
-                "amazon waf",
-                "anticaptcha",
-                "audio captcha",
-                "bypass captcha",
-                "captcha",
-                "captcha solver",
-                "cloudflare turnstile",
-                "decaptcha",
-                "funcaptcha",
-                "geetest",
-                "hcaptcha",
-                "keycaptcha",
-                "lemin",
-                "reCAPTCHA V2",
-                "recaptcha",
-                "recaptcha v3",
-                "solve captcha"
-            ],
-            "support": {
-                "issues": "https://github.com/2captcha/2captcha-php/issues",
-                "source": "https://github.com/2captcha/2captcha-php/tree/v1.1.1"
-            },
-            "time": "2023-03-21T08:40:26+00:00"
-        },
         {
             "name": "guzzlehttp/guzzle",
             "version": "7.8.0",
