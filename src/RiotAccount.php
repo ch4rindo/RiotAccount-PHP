@@ -51,7 +51,6 @@ final class RiotAccount{
 		]);
 
 		$contents = $response->getBody()->getContents();
-		var_dump($contents);
 
 		$result = json_decode($contents, true);
 		if(isset($result["error"])){
