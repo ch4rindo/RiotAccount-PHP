@@ -65,7 +65,7 @@ final class RiotAccount{
 		return true;
 	}
 
-	public function changePassword(string $currentPassword, string $newPassword) : array{
+	public function changePassword(string $currentPassword, string $newPassword) : string{
 		$response = $this->client->get("https://account.riotgames.com");
 		$csrfToken = explode("\"", explode("csrf-token\" content=", $response->getBody()->getContents())[1])[1];
 
@@ -80,8 +80,6 @@ final class RiotAccount{
 			]
 		]);
 
-		$result = json_decode($response->getBody()->getContents(), true);
-
-		return $result;
+		return json_decode($response->getBody()->getContents(), true);
 	}
 }
