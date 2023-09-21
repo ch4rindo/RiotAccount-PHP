@@ -56,7 +56,7 @@ final class RiotAccount{
 		$result = json_decode($contents, true);
 		if(isset($result["error"])){
 			echo "ログイン失敗" . PHP_EOL;
-			return $result;
+			return false;
 		}
 
 		$this->client->get(json_decode($contents, true)["response"]["parameters"]["uri"]);
