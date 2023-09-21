@@ -11,6 +11,8 @@ final class RiotAccount{
 
 	private Client $client;
 
+	private bool $loggedIn = false;
+
 	public function __construct(){
 		$this->client = new Client([
 			RequestOptions::COOKIES => true,
@@ -29,7 +31,7 @@ final class RiotAccount{
 
 	}
 
-	public function login(string $username, string $password) : void{
+	public function login(string $username, string $password) : bool{
 		$this->client->get("https://account.riotgames.com");
 
 		$response = $this->client->put("https://auth.riotgames.com/api/v1/authorization", [
@@ -54,15 +56,16 @@ final class RiotAccount{
 		$result = json_decode($contents, true);
 		if(isset($result["error"])){
 			echo "ログイン失敗" . PHP_EOL;
-			exit();
+			return $result;
 		}
 
 		$this->client->get(json_decode($contents, true)["response"]["parameters"]["uri"]);
 
-		echo "ログイン成功" . PHP_EOL;
+		$this->loggedIn = true;
+		return true;
 	}
 
-	public function changePassword(string $currentPassword, string $newPassword) : void{
+	public function changePassword(string $currentPassword, string $newPassword) : array{
 		$response = $this->client->get("https://account.riotgames.com");
 		$csrfToken = explode("\"", explode("csrf-token\" content=", $response->getBody()->getContents())[1])[1];
 
@@ -79,10 +82,6 @@ final class RiotAccount{
 
 		$result = json_decode($response->getBody()->getContents(), true);
 
-		if(isset($result["message"]) && $result["message"] == "password_updated"){
-			echo "パスワードの変更に成功しました" . PHP_EOL;
-		}else{
-			var_dump($result);
-		}
+		return $result;
 	}
 }
