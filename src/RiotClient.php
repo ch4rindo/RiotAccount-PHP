@@ -7,7 +7,7 @@ namespace charindo\RiotAccount;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 
-final class RiotAccount{
+final class RiotClient{
 
 	private Client $client;
 
