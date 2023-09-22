@@ -34,7 +34,7 @@ final class RiotClient{
 
 	}
 
-	public function login(string $username, string $password) : bool{
+	public function login(string $username, string $password) : void{
 		$this->client->get("https://account.riotgames.com");
 
 		$response = $this->client->put("https://auth.riotgames.com/api/v1/authorization", [
@@ -64,11 +64,9 @@ final class RiotClient{
 
 		$this->loggedIn = true;
 		$this->password = $password;
-
-		return true;
 	}
 
-	public function changePassword(string $newPassword) : bool{
+	public function changePassword(string $newPassword) : void{
 		if(!$this->loggedIn) throw new AuthenticationException("You are not logged in.");
 
 		$response = $this->client->get("https://account.riotgames.com");
@@ -102,7 +100,5 @@ final class RiotClient{
 			$this->loggedIn = false;
 			throw new AuthenticationException("You are not logged in.");
 		}
-
-		return true;
 	}
 }
