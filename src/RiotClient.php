@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace charindo\RiotAccount;
 
+use charindo\RiotAccount\constants\ExceptionErrorCode;
 use charindo\RiotAccount\exception\AuthenticationException;
 use charindo\RiotAccount\exception\ValidationException;
 use GuzzleHttp\Client;
@@ -35,6 +36,8 @@ final class RiotClient{
 	}
 
 	public function login(string $username, string $password) : void{
+		$this->password = $password;
+
 		$this->client->get("https://account.riotgames.com");
 
 		$response = $this->client->put("https://auth.riotgames.com/api/v1/authorization", [
@@ -56,18 +59,45 @@ final class RiotClient{
 		$response = json_decode($response->getBody()->getContents(), true);
 		$response = match ($response["type"]) {
 			"response" => $response["response"],
+			"auth" => throw new AuthenticationException($response["error"], ExceptionErrorCode::AUTH_ERROR),
+			"multifactor" => throw new AuthenticationException("You need to get past the 2FA.", ExceptionErrorCode::NEED_2FA)
+		};
+
+		var_dump($response->getBody()->getContents());
+
+		$this->client->get($response["parameters"]["uri"]);
+
+		$this->loggedIn = true;
+	}
+
+	public function auth2FA(string $code) : void{
+		$response = json_decode($this->client->put("https://auth.riotgames.com/api/v1/authorization", [
+			RequestOptions::JSON => [
+				"type" => "multifactor",
+				"code" => $code,
+				"rememberDevice" => false
+			],
+			RequestOptions::HEADERS => [
+				"Accept: application/json",
+				"Accepted-Laungeage: ja,en-US;q=0.7,en;q=0.3",
+				"Context-Type: application/json",
+				"Origin: https://authenticate.riotgames.com",
+				"Referer: https://authenticate.riotgames.com"
+			]
+		])->getBody()->getContents(), true);
+
+		$response = match ($response["type"]) {
+			"response" => $response["response"],
 			"auth" => throw new AuthenticationException($response["error"]),
-			"multifactor" => throw new AuthenticationException("2FA is not supported."),
 		};
 
 		$this->client->get($response["parameters"]["uri"]);
 
 		$this->loggedIn = true;
-		$this->password = $password;
 	}
 
 	public function changePassword(string $newPassword) : void{
-		if(!$this->loggedIn) throw new AuthenticationException("You are not logged in.");
+		if(!$this->loggedIn) throw new AuthenticationException("You are not logged in.", ExceptionErrorCode::NOT_LOGGED_IN);
 
 		$response = $this->client->get("https://account.riotgames.com");
 		$csrfToken = explode("\"", explode("csrf-token\" content=", $response->getBody()->getContents())[1])[1];
@@ -88,17 +118,17 @@ final class RiotClient{
 		if($response->getStatusCode() === 422 && $data["errorCode"] === "validation_error"){
 			if(isset($data["errors"]["password"])){
 				match($data["errors"]["password"]){
-					"invalid_password_format" => throw new ValidationException("Invalid password format."),
-					"weak_password" => throw new ValidationException("This new password is weak.")
+					"invalid_password_format" => throw new ValidationException("Invalid password format.", ExceptionErrorCode::INVALID_PASSWORD_FORMAT),
+					"weak_password" => throw new ValidationException("This new password is weak.", ExceptionErrorCode::WEAK_PASSWORD)
 				};
 			}elseif(isset($data["errors"]["currentPassword"])){
 				match ($data["errors"]["currentPassword"]) {
-					"incorrect_password" => throw new ValidationException("Current password is incorrect.")
+					"incorrect_password" => throw new ValidationException("Current password is incorrect.", ExceptionErrorCode::INCORRECT_PASSWORD)
 				};
 			}
 		}elseif($response->getStatusCode() === 403){
 			$this->loggedIn = false;
-			throw new AuthenticationException("You are not logged in.");
+			throw new AuthenticationException("You are not logged in.", ExceptionErrorCode::NOT_LOGGED_IN);
 		}
 	}
 }
